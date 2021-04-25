@@ -1,5 +1,7 @@
-package LexicalAnalyzer;
+package Parser;
 
+import LexicalAnalyzer.Instruction;
+import LexicalAnalyzer.InstructionType;
 import Parser.Parser;
 import org.junit.Assert;
 import org.junit.Test;
