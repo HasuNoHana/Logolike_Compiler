@@ -1,4 +1,6 @@
-package LexicalAnalyzer;
+package Parser;
+
+import LexicalAnalyzer.Instruction;
 
 import java.util.List;
 
