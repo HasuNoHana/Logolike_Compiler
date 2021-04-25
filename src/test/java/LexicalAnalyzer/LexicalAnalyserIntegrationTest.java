@@ -114,7 +114,7 @@ public class LexicalAnalyserIntegrationTest {
     }
 
     @Test
-    public void test() throws MissingEndBracketException {
+    public void test() throws WrongTokenExeption {
         // given
         LexicalAnalyser analyzer = new LexicalAnalyser(code);
         ArrayList<String> tokens = new ArrayList<String>();
@@ -123,7 +123,7 @@ public class LexicalAnalyserIntegrationTest {
         while(true){
             try{
                 tokens.add(analyzer.findNextToken().getContent());
-            } catch (WrongTokenExeption missingEndBracketException) {
+            } catch (MissingEndBracketException missingEndBracketException) {
                 break;
             }
         }
