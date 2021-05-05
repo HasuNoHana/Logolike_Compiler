@@ -120,12 +120,10 @@ public class LexicalAnalyserIntegrationTest {
         ArrayList<String> tokens = new ArrayList<>();
 
         // when
-        while(true){
-            try{
-                tokens.add(analyzer.findNextToken().getContent());
-            } catch (MissingEndBracketException missingEndBracketException) {
-                break;
-            }
+        Token token = analyzer.findNextToken();
+        while(!token.getType().equals(TokenType.EOF)){
+                tokens.add(token.getContent());
+                token = analyzer.findNextToken();
         }
 
         // then

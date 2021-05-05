@@ -44,7 +44,7 @@ public class LexicalAnalyserTokenType {
     }
 
     @Test
-    public void test() throws MissingEndBracketException, WrongTokenExeption {
+    public void test() throws WrongTokenExeption {
         // given
         LexicalAnalyser analyzer = new LexicalAnalyser(code);
 
