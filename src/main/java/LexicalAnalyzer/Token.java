@@ -1,8 +1,8 @@
 package LexicalAnalyzer;
 
 public class Token {
-    TokenType type;
-    String content;
+    final TokenType type;
+    final String content;
 
     public Token(String content, TokenType type) {
         this.content = content;

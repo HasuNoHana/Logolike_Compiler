@@ -12,7 +12,7 @@ public class LexicalAnalyserExceptionTest {
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
 
         // when
-        Token t = analyzer.findNextToken();
+        analyzer.findNextToken();
     }
 
     @Test(expected = WrongTokenExeption.class)
@@ -22,8 +22,8 @@ public class LexicalAnalyserExceptionTest {
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
 
         // when
-        Token t = analyzer.findNextToken();
-        t = analyzer.findNextToken();
+        analyzer.findNextToken();
+        analyzer.findNextToken();
     }
     @Test(expected = WrongTokenExeption.class)
     public void shouldThrowWrongTokenExeption_OR() throws MissingEndBracketException, WrongTokenExeption {

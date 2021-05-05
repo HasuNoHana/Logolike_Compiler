@@ -7,7 +7,7 @@ import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
 public class LexicalAnalyser {
-    private String program;
+    private final String program;
     private int current = 0;
     private String tokenInside;
 
@@ -20,7 +20,7 @@ public class LexicalAnalyser {
         tokenInside = String.valueOf(currentLetter);
         try {
             if (currentLetter == ' ' || currentLetter == '\n'){
-                currentLetter = getNextLetter();
+                getNextLetter();
                 return findNextToken();
             }
             else if (currentLetter == 'd') {
@@ -109,6 +109,37 @@ public class LexicalAnalyser {
             throw new MissingEndBracketException("Your file is missing } at the end");
         }
     }
+
+    private boolean isPartOfDigit(char currentLetter) {
+        return currentLetter=='0' || isPartOfNonZeroDigit(currentLetter);
+    }
+
+    private boolean isPartOfNonZeroDigit(char c) {
+        return c=='1' ||c=='2' ||c=='3' ||c=='4' ||c=='5' ||c=='6' ||c=='7' ||c=='8' ||c=='9';
+    }
+
+    private boolean isPartOfId(char currentLetter) {
+        return isLetter(currentLetter) || isDigit(currentLetter) || currentLetter == '_';
+    }
+
+    private char getNextLetter() {
+        char currentLetter = program.charAt(current);
+        current++;
+        tokenInside += currentLetter;
+        return currentLetter;
+    }
+
+    private String getFinalToken() {
+        int finalTokenLenght = tokenInside.length() -1;
+        return tokenInside.substring(0, finalTokenLenght);
+    }
+
+
+
+//    --------------------------------------------------------------------------------
+//                                  GO TO STATE
+//    --------------------------------------------------------------------------------
+
 
     private Token gotoState_F() {
         char currentLetter = getNextLetter();
@@ -273,22 +304,22 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_NOT_EQUALS() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.NOT_EQUALS);
     }
 
     private Token gotoState_DIVIDE() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.DIVIDE);
     }
 
     private Token gotoState_MULTIPLY() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.MULTIPLY);
     }
 
     private Token gotoState_ADD() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.PLUS);
     }
 
@@ -301,7 +332,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_GREATER_EQUALS() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.GREATER_EQUAL);
     }
 
@@ -314,7 +345,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_LESSER_EQUALS() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.LESSER_EQUAL);
     }
 
@@ -327,7 +358,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_AND() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.AND);
     }
 
@@ -340,7 +371,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_OR() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.OR);
     }
 
@@ -353,25 +384,19 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_NUMBER() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.NUMBER);
     }
 
-    private boolean isPartOfDigit(char currentLetter) {
-        return currentLetter=='0' || isPartOfNonZeroDigit(currentLetter);
-    }
 
-    private boolean isPartOfNonZeroDigit(char c) {
-        return c=='1' ||c=='2' ||c=='3' ||c=='4' ||c=='5' ||c=='6' ||c=='7' ||c=='8' ||c=='9';
-    }
 
     private Token gotoState_SQUARE_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.SQUARE_CLOSED_BRACKET);
     }
 
     private Token gotoState_SQUARE_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.SQUARE_OPEN_BRACKET);
     }
 
@@ -384,42 +409,42 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_IS_EQUAL() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.EQUAL);
     }
 
     private Token gotoState_CURLY_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.CURLY_CLOSED_BRACKET);
     }
 
     private Token gotoState_CURLY_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.CURLY_OPEN_BRACKET);
     }
 
     private Token gotoState_ROUND_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.ROUND_CLOSED_BRACKET);
     }
 
     private Token gotoState_ROUND_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.ROUND_OPEN_BRACKET);
     }
 
     private Token gotoState_SEMICOLON() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.SEMICOLON);
     }
 
     private Token gotoState_COMMA() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.COMMA);
     }
 
     private Token gotoState_DOT() {
-        char currentLetter = getNextLetter();
+        getNextLetter();
         return new Token(getFinalToken(), TokenType.DOT);
     }
 
@@ -450,10 +475,7 @@ public class LexicalAnalyser {
         }
     }
 
-    private String getFinalToken() {
-        int finalTokenLenght = tokenInside.length() -1;
-        return tokenInside.substring(0, finalTokenLenght);
-    }
+
 
     private Token gotoState_ID(char currentLetter) {
         if (isPartOfId(currentLetter)){
@@ -468,14 +490,5 @@ public class LexicalAnalyser {
         return gotoState_ID(getNextLetter());
     }
 
-    private boolean isPartOfId(char currentLetter) {
-        return isLetter(currentLetter) || isDigit(currentLetter) || currentLetter == '_';
-    }
 
-    private char getNextLetter() {
-        char currentLetter = program.charAt(current);
-        current++;
-        tokenInside += currentLetter;
-        return currentLetter;
-    }
 }

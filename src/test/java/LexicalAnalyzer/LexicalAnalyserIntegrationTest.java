@@ -117,7 +117,7 @@ public class LexicalAnalyserIntegrationTest {
     public void test() throws WrongTokenExeption {
         // given
         LexicalAnalyser analyzer = new LexicalAnalyser(code);
-        ArrayList<String> tokens = new ArrayList<String>();
+        ArrayList<String> tokens = new ArrayList<>();
 
         // when
         while(true){

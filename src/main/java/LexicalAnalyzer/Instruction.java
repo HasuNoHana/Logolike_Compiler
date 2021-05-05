@@ -1,7 +1,7 @@
 package LexicalAnalyzer;
 
 public abstract class Instruction {
-    protected InstructionType instructionType;
+    protected final InstructionType instructionType;
 
     protected Instruction(InstructionType instructionType) {
         this.instructionType = instructionType;
