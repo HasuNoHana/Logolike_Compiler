@@ -1,18 +1,23 @@
 package LexicalAnalyzer;
 
+import exceptions.CanNotReadInputException;
 import exceptions.WrongTokenExeption;
 
-import static java.lang.Character.isDigit;
-import static java.lang.Character.isLetter;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
+import static java.lang.Character.*;
 
 public class LexicalAnalyser {
-    private final String program;
-    private int current = 0;
+    private final BufferedReader reader;
     private String tokenInside;
     private char currentLetter;
 
     public LexicalAnalyser(String program) {
-        this.program = program;
+        StringReader stringBuilder = new StringReader(program);
+        reader = new BufferedReader(stringBuilder);
+
     }
 
     public Token findNextToken() throws WrongTokenExeption {
@@ -79,8 +84,15 @@ public class LexicalAnalyser {
             return gotoState_DIVIDE();
         } else if (currentLetter == '!') {
             return gotoState_NEGATION();
+        } else if (isEOF()) {
+            return new Token("", TokenType.EOF);
+        } else {
+            throw new WrongTokenExeption(tokenInside);
         }
-        return new Token("", TokenType.EOF);
+    }
+
+    private boolean isEOF() {
+        return (int) currentLetter == 65535; // EOF char
     }
 
     private boolean isPartOfDigit(char currentLetter) {
@@ -95,16 +107,15 @@ public class LexicalAnalyser {
         return isLetter(currentLetter) || isDigit(currentLetter) || currentLetter == '_';
     }
 
-    private void loadNextLetter() throws StringIndexOutOfBoundsException {
-        char currentLetter;
+    private void loadNextLetter() {
         try {
-            currentLetter = program.charAt(current);
-        } catch (StringIndexOutOfBoundsException e) {
-            currentLetter = '?';
+            currentLetter = (char) reader.read();
+
+        } catch (IOException e) {
+            throw new CanNotReadInputException("Can not read input",e); // TODO make more verbose
         }
-        current++;
+
         tokenInside += currentLetter;
-        this.currentLetter = currentLetter;
     }
 
     private String getFinalToken() {
