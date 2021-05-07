@@ -381,9 +381,6 @@ public class LexicalAnalyser {
 
     private Token gotoState_MINUS() {
         loadNextLetter();
-        if (isPartOfDigit(currentLetter)) {
-            return gotoState_NUMBER();
-        }
         return new Token(getFinalToken(), TokenType.MINUS);
     }
 
