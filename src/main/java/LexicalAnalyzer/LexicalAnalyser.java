@@ -6,18 +6,24 @@ import exceptions.WrongTokenExeption;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Queue;
 
 import static java.lang.Character.*;
 
+
+
 public class LexicalAnalyser {
+    static final int LASTCHARACTERS = 30;
     private final BufferedReader reader;
     private String tokenInside;
     private char currentLetter;
+    private int currentLine = 0;
+    private int numberOfCharacterInLine = 0;
+    CircularFifoQueue lastCharacters = new CircularFifoQueue(LASTCHARACTERS);
 
     public LexicalAnalyser(String program) {
         StringReader stringBuilder = new StringReader(program);
         reader = new BufferedReader(stringBuilder);
-
     }
 
     public Token findNextToken() throws WrongTokenExeption {
@@ -26,8 +32,13 @@ public class LexicalAnalyser {
         }
 
         tokenInside = String.valueOf(currentLetter);
-        
-        if (currentLetter == ' ' || currentLetter == '\n') {
+
+        if (currentLetter == ' ') {
+            loadNextLetter();
+            return findNextToken();
+        } else if (currentLetter == '\n') {
+            this.currentLine++;
+            this.numberOfCharacterInLine = 0;
             loadNextLetter();
             return findNextToken();
         } else if (currentLetter == 'd') {
@@ -87,8 +98,9 @@ public class LexicalAnalyser {
         } else if (isEOF()) {
             return new Token("", TokenType.EOF);
         } else {
-            throw new WrongTokenExeption(tokenInside);
+            throwWrongTokenExeption(tokenInside);
         }
+        return null; //it will never run because throwWrongTokenExeption will throw an exception
     }
 
     private boolean isEOF() {
@@ -115,6 +127,8 @@ public class LexicalAnalyser {
             throw new CanNotReadInputException("Can not read input",e); // TODO make more verbose
         }
 
+        this.numberOfCharacterInLine++;
+        this.lastCharacters.add(currentLetter);
         tokenInside += currentLetter;
     }
 
@@ -123,6 +137,11 @@ public class LexicalAnalyser {
         return tokenInside.substring(0, finalTokenLenght);
     }
 
+    private void throwWrongTokenExeption(String s) throws WrongTokenExeption {
+        System.out.println("There has been WrongTokenExeption in line: "+currentLine + " letter: "+(numberOfCharacterInLine-1));
+        lastCharacters.printContent();
+        throw new WrongTokenExeption(s);
+    }
 
 //    --------------------------------------------------------------------------------
 //                                  GO TO STATE
@@ -337,7 +356,8 @@ public class LexicalAnalyser {
         if (currentLetter == '&') {
             return gotoState_AND();
         }
-        throw new WrongTokenExeption("&");
+        throwWrongTokenExeption("&");
+        return null;//it will never run because throwWrongTokenExeption will throw an exception
     }
 
     private Token gotoState_AND() {
@@ -350,7 +370,8 @@ public class LexicalAnalyser {
         if (currentLetter == '|') {
             return gotoState_OR();
         }
-        throw new WrongTokenExeption("|");
+        throwWrongTokenExeption("|");
+        return null;
     }
 
     private Token gotoState_OR() {
