@@ -26,7 +26,7 @@ public class LexicalAnalyser {
         }
 
         tokenInside = String.valueOf(currentLetter);
-
+        
         if (currentLetter == ' ' || currentLetter == '\n') {
             loadNextLetter();
             return findNextToken();

@@ -5,9 +5,10 @@ import exceptions.WrongTokenExeption;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class LexicalAnalyserExceptionTest {
+public class LexicalAnalyserSingleTest {
+
     @Test
-    public void shouldThrowExceptionIfEndBracketNotPresent() throws WrongTokenExeption {
+    public void shouldContainEOFToken() throws WrongTokenExeption {
         // given
         String programCode = "def";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
