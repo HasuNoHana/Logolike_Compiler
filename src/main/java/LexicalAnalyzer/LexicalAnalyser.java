@@ -53,8 +53,8 @@ public class LexicalAnalyser {
             return gotoState_T();
         } else if (currentLetter == 'F') {
             return gotoState_F();
-        } else if (isPartOfId(currentLetter)) {
-            return gotoState_ID(currentLetter);
+        } else if (isLetter(currentLetter)) {
+            return gotoState_ID();
         } else if (currentLetter == '.') {
             return gotoState_DOT();
         } else if (currentLetter == ',') {
@@ -384,11 +384,6 @@ public class LexicalAnalyser {
         return new Token(getFinalToken(), TokenType.MINUS);
     }
 
-    private Token gotoState_NUMBER() {
-        loadNextLetter();
-        return new Token(getFinalToken(), TokenType.NUMBER);
-    }
-
 
     private Token gotoState_SQUARE_CLOSED_BRACKET() {
         loadNextLetter();
@@ -488,5 +483,12 @@ public class LexicalAnalyser {
         return gotoState_ID(currentLetter);
     }
 
+    private Token gotoState_NUMBER() {
+        loadNextLetter();
+        if (isPartOfDigit(currentLetter)) {
+            return gotoState_NUMBER();
+        }
+        return new Token(getFinalToken(), TokenType.NUMBER);
+    }
 
 }

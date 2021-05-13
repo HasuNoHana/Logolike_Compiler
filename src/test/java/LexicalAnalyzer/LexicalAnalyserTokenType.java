@@ -25,11 +25,23 @@ public class LexicalAnalyserTokenType {
                 {"] ", TokenType.SQUARE_CLOSED_BRACKET},
                 {"for ", TokenType.FOR},
                 {"defINI ", TokenType.ID},
+                {"d ", TokenType.ID},
                 {"de ", TokenType.ID},
                 {"True ", TokenType.TRUE},
                 {"False ", TokenType.FALSE},
                 {"if ", TokenType.IF},
-                {"else ", TokenType.ELSE}
+                {"else ", TokenType.ELSE},
+                {"- ", TokenType.MINUS},
+                {"+ ", TokenType.PLUS},
+                {"< ", TokenType.LESSER},
+                {"<= ", TokenType.LESSER_EQUAL},
+                {"> ", TokenType.GREATER},
+                {">= ", TokenType.GREATER_EQUAL},
+                {"== ", TokenType.EQUAL},
+                {"!= ", TokenType.NOT_EQUALS},
+                {"= ", TokenType.ASSIGN},
+                {"2 ", TokenType.NUMBER},
+                {"200 ", TokenType.NUMBER}
         });
     }
 
