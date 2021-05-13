@@ -6,7 +6,6 @@ import exceptions.WrongTokenExeption;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Queue;
 
 import static java.lang.Character.*;
 
@@ -32,16 +31,11 @@ public class LexicalAnalyser {
         }
 
         tokenInside = String.valueOf(currentLetter);
+        deleteSpaces();
+        deleteNewlines();
+        deleteSpaces();
 
-        if (currentLetter == ' ') {
-            loadNextLetter();
-            return findNextToken();
-        } else if (currentLetter == '\n') {
-            this.currentLine++;
-            this.numberOfCharacterInLine = 0;
-            loadNextLetter();
-            return findNextToken();
-        } else if (currentLetter == 'd') {
+        if (currentLetter == 'd') {
             return gotoState_d();
         } else if (currentLetter == 'f') {
             return gotoState_f();
@@ -101,6 +95,22 @@ public class LexicalAnalyser {
             throwWrongTokenExeption(tokenInside);
         }
         return null; //it will never run because throwWrongTokenExeption will throw an exception
+    }
+
+    private void deleteNewlines() {
+        while(currentLetter == '\n'){
+            this.currentLine++;
+            this.numberOfCharacterInLine = 0;
+            loadNextLetter();
+            tokenInside = String.valueOf(currentLetter);
+        }
+    }
+
+    private void deleteSpaces() {
+        while (currentLetter == ' ') {
+            loadNextLetter();
+            tokenInside = String.valueOf(currentLetter);
+        }
     }
 
     private boolean isEOF() {
