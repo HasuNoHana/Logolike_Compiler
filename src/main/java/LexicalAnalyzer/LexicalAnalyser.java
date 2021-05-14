@@ -70,7 +70,7 @@ public class LexicalAnalyser {
         } else if (currentLetter == '=') {
             return gotoState_EQUAL();
         } else if (isPartOfDigit(currentLetter)) {
-            return gotoState_NUMBER();
+            return gotoState_NUMBER(Character.getNumericValue(currentLetter));
         } else if (currentLetter == '-') {
             return gotoState_MINUS();
         } else if (currentLetter == '|') {
@@ -493,12 +493,13 @@ public class LexicalAnalyser {
         return gotoState_ID(currentLetter);
     }
 
-    private Token gotoState_NUMBER() {
+    private Token gotoState_NUMBER(int number) {
         loadNextLetter();
         if (isPartOfDigit(currentLetter)) {
-            return gotoState_NUMBER();
+            number = number*10 + Character.getNumericValue(currentLetter);
+            return gotoState_NUMBER(number);
         }
-        return new Token(getFinalToken(), TokenType.NUMBER);
+        return new Token(number, TokenType.NUMBER);
     }
 
 }

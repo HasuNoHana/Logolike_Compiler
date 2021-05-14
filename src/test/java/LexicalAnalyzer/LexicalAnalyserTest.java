@@ -50,7 +50,11 @@ public class LexicalAnalyserTest {
         Token t = analyzer.findNextToken();
 
         // then
-        Assert.assertEquals(expectedToken, t.getContent());
+        if(t.getType() == TokenType.NUMBER){
+            Assert.assertEquals(expectedToken, t.getIntContent());
+        } else {
+            Assert.assertEquals(expectedToken, t.getContent());
+        }
     }
 
 

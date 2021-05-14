@@ -122,7 +122,11 @@ public class LexicalAnalyserIntegrationTest {
         // when
         Token token = analyzer.findNextToken();
         while(!token.getType().equals(TokenType.EOF)){
+            if(token.getType() == TokenType.NUMBER){
+                tokens.add(String.valueOf(token.getIntContent()));
+            } else {
                 tokens.add(token.getContent());
+            }
                 token = analyzer.findNextToken();
         }
 
