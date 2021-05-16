@@ -20,12 +20,12 @@ public class LexicalAnalyserTest {
     )
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"def ", "def"},
-                {"definition ", "definition"},
-                {"turtle ", "turtle"},
-                {". ", "."},
-                {", ", ","},
-                {"; ", ";"},
+                {"def", "def"},
+                {"definition", "definition"},
+                {"turtle", "turtle"},
+                {".", "."},
+                {",", ","},
+                {";", ";"},
 
 
         });
@@ -50,7 +50,11 @@ public class LexicalAnalyserTest {
         Token t = analyzer.findNextToken();
 
         // then
-        Assert.assertEquals(expectedToken, t.getContent());
+        if(t.getType() == TokenType.NUMBER){
+            Assert.assertEquals(expectedToken, t.getIntContent());
+        } else {
+            Assert.assertEquals(expectedToken, t.getContent());
+        }
     }
 
 

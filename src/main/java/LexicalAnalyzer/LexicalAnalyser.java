@@ -1,117 +1,158 @@
 package LexicalAnalyzer;
 
-import exceptions.MissingEndBracketException;
+import exceptions.CanNotReadInputException;
 import exceptions.WrongTokenExeption;
 
-import static java.lang.Character.isDigit;
-import static java.lang.Character.isLetter;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
+import static java.lang.Character.*;
+
+
 
 public class LexicalAnalyser {
-    private String program;
-    private int current = 0;
+    static final int LASTCHARACTERS = 30;
+    private final BufferedReader reader;
     private String tokenInside;
+    private char currentLetter;
+    private int currentLine = 0;
+    private int numberOfCharacterInLine = 0;
+    CircularFifoQueue lastCharacters = new CircularFifoQueue(LASTCHARACTERS);
 
     public LexicalAnalyser(String program) {
-        this.program = program;
+        StringReader stringBuilder = new StringReader(program);
+        reader = new BufferedReader(stringBuilder);
     }
 
-    public Token findNextToken() throws MissingEndBracketException, WrongTokenExeption {
-        char currentLetter = tokenInside == null ? getNextLetter() : tokenInside.substring(tokenInside.length()-1).charAt(0);
+    public Token findNextToken() throws WrongTokenExeption {
+        if (tokenInside == null) {
+            loadNextLetter();
+        }
+
         tokenInside = String.valueOf(currentLetter);
-        try {
-            if (currentLetter == ' ' || currentLetter == '\n'){
-                currentLetter = getNextLetter();
-                return findNextToken();
+        deleteWhiteCharacters();
+
+        if (currentLetter == 'd') {
+            return gotoState_d();
+        } else if (currentLetter == 'f') {
+            return gotoState_f();
+        } else if (currentLetter == 'i') {
+            return gotoState_i();
+        } else if (currentLetter == 'e') {
+            return gotoState_e();
+        } else if (currentLetter == 'T') {
+            return gotoState_T();
+        } else if (currentLetter == 'F') {
+            return gotoState_F();
+        } else if (isLetter(currentLetter)) {
+            return gotoState_ID();
+        } else if (currentLetter == '.') {
+            return gotoState_DOT();
+        } else if (currentLetter == ',') {
+            return gotoState_COMMA();
+        } else if (currentLetter == ';') {
+            return gotoState_SEMICOLON();
+        } else if (currentLetter == '(') {
+            return gotoState_ROUND_OPEN_BRACKET();
+        } else if (currentLetter == ')') {
+            return gotoState_ROUND_CLOSED_BRACKET();
+        } else if (currentLetter == '{') {
+            return gotoState_CURLY_OPEN_BRACKET();
+        } else if (currentLetter == '}') {
+            return gotoState_CURLY_CLOSED_BRACKET();
+        } else if (currentLetter == '[') {
+            return gotoState_SQUARE_OPEN_BRACKET();
+        } else if (currentLetter == ']') {
+            return gotoState_SQUARE_CLOSED_BRACKET();
+        } else if (currentLetter == '=') {
+            return gotoState_EQUAL();
+        } else if (isPartOfDigit(currentLetter)) {
+            return gotoState_NUMBER(Character.getNumericValue(currentLetter));
+        } else if (currentLetter == '-') {
+            return gotoState_MINUS();
+        } else if (currentLetter == '|') {
+            return gotoState_PIPE();
+        } else if (currentLetter == '&') {
+            return gotoState_ONE_AND();
+        } else if (currentLetter == '<') {
+            return gotoState_LESSER();
+        } else if (currentLetter == '>') {
+            return gotoState_GREATER();
+        } else if (currentLetter == '+') {
+            return gotoState_ADD();
+        } else if (currentLetter == '*') {
+            return gotoState_MULTIPLY();
+        } else if (currentLetter == '/') {
+            return gotoState_DIVIDE();
+        } else if (currentLetter == '!') {
+            return gotoState_NEGATION();
+        } else if (isEOF()) {
+            return new Token("", TokenType.EOF);
+        } else {
+            throwWrongTokenExeption(tokenInside);
+        }
+        return null; //it will never run because throwWrongTokenExeption will throw an exception
+    }
+
+    private void deleteWhiteCharacters() {
+        while(Character.isWhitespace(currentLetter)){
+            if(currentLetter == '\r' || currentLetter == '\n'){
+                this.currentLine++;
+                this.numberOfCharacterInLine = 0;
             }
-            else if (currentLetter == 'd') {
-                return gotoState_d();
-            }
-            else if (currentLetter == 'f') {
-                return gotoState_f();
-            }
-            else if (currentLetter == 'i') {
-                return gotoState_i();
-            }
-            else if (currentLetter == 'e') {
-                return gotoState_e();
-            }
-            else if (currentLetter == 'T') {
-                return gotoState_T();
-            }
-            else if (currentLetter == 'F') {
-                return gotoState_F();
-            }
-            else if(isPartOfId(currentLetter)){
-                return gotoState_ID(currentLetter);
-            }
-            else if(currentLetter == '.'){
-                return gotoState_DOT();
-            }
-            else if(currentLetter == ','){
-                return gotoState_COMMA();
-            }
-            else if(currentLetter == ';'){
-                return gotoState_SEMICOLON();
-            }
-            else if(currentLetter == '('){
-                return gotoState_ROUND_OPEN_BRACKET();
-            }
-            else if(currentLetter == ')'){
-                return gotoState_ROUND_CLOSED_BRACKET();
-            }
-            else if(currentLetter == '{'){
-                return gotoState_CURLY_OPEN_BRACKET();
-            }
-            else if(currentLetter == '}'){
-                return gotoState_CURLY_CLOSED_BRACKET();
-            }
-            else if(currentLetter == '['){
-                return gotoState_SQUARE_OPEN_BRACKET();
-            }
-            else if(currentLetter == ']'){
-                return gotoState_SQUARE_CLOSED_BRACKET();
-            }
-            else if(currentLetter == '='){
-                return gotoState_EQUAL();
-            }
-            else if(isPartOfDigit(currentLetter)){
-                return gotoState_NUMBER();
-            }
-            else if(currentLetter == '-'){
-                return gotoState_MINUS();
-            }
-            else if(currentLetter == '|'){
-                return gotoState_PIPE();
-            }
-            else if(currentLetter == '&'){
-                return gotoState_ONE_AND();
-            }
-            else if(currentLetter == '<'){
-                return gotoState_LESSER();
-            }
-            else if(currentLetter == '>'){
-                return gotoState_GREATER();
-            }
-            else if(currentLetter == '+'){
-                return gotoState_ADD();
-            }
-            else if(currentLetter == '*'){
-                return gotoState_MULTIPLY();
-            }
-            else if(currentLetter == '/'){
-                return gotoState_DIVIDE();
-            }
-            else if(currentLetter == '!'){
-                return gotoState_NEGATION();
-            }
-            return null;
-        } catch (StringIndexOutOfBoundsException stringIndexOutOfBoundsException) {
-            throw new MissingEndBracketException("Your file is missing } at the end");
+            loadNextLetter();
+            tokenInside = String.valueOf(currentLetter);
         }
     }
 
+    private boolean isEOF() {
+        return (int) currentLetter == 65535; // EOF char
+    }
+
+    private boolean isPartOfDigit(char currentLetter) {
+        return currentLetter == '0' || isPartOfNonZeroDigit(currentLetter);
+    }
+
+    private boolean isPartOfNonZeroDigit(char c) {
+        return c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
+    }
+
+    private boolean isPartOfId(char currentLetter) {
+        return isLetter(currentLetter) || isDigit(currentLetter) || currentLetter == '_';
+    }
+
+    private void loadNextLetter() {
+        try {
+            currentLetter = (char) reader.read();
+
+        } catch (IOException e) {
+            throw new CanNotReadInputException("Can not read input",e); // TODO make more verbose
+        }
+
+        this.numberOfCharacterInLine++;
+        this.lastCharacters.add(currentLetter);
+        tokenInside += currentLetter;
+    }
+
+    private String getFinalToken() {
+        int finalTokenLenght = tokenInside.length() - 1;
+        return tokenInside.substring(0, finalTokenLenght);
+    }
+
+    private void throwWrongTokenExeption(String s) throws WrongTokenExeption {
+        System.out.println("There has been WrongTokenExeption in line: "+currentLine + " letter: "+(numberOfCharacterInLine-1));
+        lastCharacters.printContent();
+        throw new WrongTokenExeption(s);
+    }
+
+//    --------------------------------------------------------------------------------
+//                                  GO TO STATE
+//    --------------------------------------------------------------------------------
+
+
     private Token gotoState_F() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'a') {
             return gotoState_Fa();
         }
@@ -119,7 +160,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_Fa() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'l') {
             return gotoState_Fal();
         }
@@ -127,7 +168,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_Fal() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 's') {
             return gotoState_Fals();
         }
@@ -135,7 +176,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_Fals() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'e') {
             return gotoState_False();
         }
@@ -143,17 +184,16 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_False() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.FALSE);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
     private Token gotoState_T() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'r') {
             return gotoState_Tr();
         }
@@ -161,7 +201,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_Tr() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'u') {
             return gotoState_Tru();
         }
@@ -169,7 +209,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_Tru() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'e') {
             return gotoState_True();
         }
@@ -177,17 +217,16 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_True() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.TRUE);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
     private Token gotoState_e() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'l') {
             return gotoState_el();
         }
@@ -195,7 +234,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_el() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 's') {
             return gotoState_els();
         }
@@ -203,7 +242,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_els() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'e') {
             return gotoState_else();
         }
@@ -211,17 +250,16 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_else() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.ELSE);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
     private Token gotoState_i() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'f') {
             return gotoState_if();
         }
@@ -229,17 +267,16 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_if() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.IF);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
     private Token gotoState_f() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'o') {
             return gotoState_fo();
         }
@@ -247,7 +284,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_fo() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'r') {
             return gotoState_for();
         }
@@ -255,176 +292,162 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_for() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.FOR);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
     private Token gotoState_NEGATION() {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '='){
+        loadNextLetter();
+        if (currentLetter == '=') {
             return gotoState_NOT_EQUALS();
         }
         return new Token(getFinalToken(), TokenType.NEGATION);
     }
 
     private Token gotoState_NOT_EQUALS() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.NOT_EQUALS);
     }
 
     private Token gotoState_DIVIDE() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.DIVIDE);
     }
 
     private Token gotoState_MULTIPLY() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.MULTIPLY);
     }
 
     private Token gotoState_ADD() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.PLUS);
     }
 
     private Token gotoState_GREATER() {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '='){
+        loadNextLetter();
+        if (currentLetter == '=') {
             return gotoState_GREATER_EQUALS();
         }
         return new Token(getFinalToken(), TokenType.GREATER);
     }
 
     private Token gotoState_GREATER_EQUALS() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.GREATER_EQUAL);
     }
 
     private Token gotoState_LESSER() {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '='){
+        loadNextLetter();
+        if (currentLetter == '=') {
             return gotoState_LESSER_EQUALS();
         }
         return new Token(getFinalToken(), TokenType.LESSER);
     }
 
     private Token gotoState_LESSER_EQUALS() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.LESSER_EQUAL);
     }
 
     private Token gotoState_ONE_AND() throws WrongTokenExeption {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '&'){
+        loadNextLetter();
+        if (currentLetter == '&') {
             return gotoState_AND();
         }
-        throw new WrongTokenExeption("&");
+        throwWrongTokenExeption("&");
+        return null;//it will never run because throwWrongTokenExeption will throw an exception
     }
 
     private Token gotoState_AND() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.AND);
     }
 
     private Token gotoState_PIPE() throws WrongTokenExeption {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '|'){
+        loadNextLetter();
+        if (currentLetter == '|') {
             return gotoState_OR();
         }
-        throw new WrongTokenExeption("|");
+        throwWrongTokenExeption("|");
+        return null;
     }
 
     private Token gotoState_OR() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.OR);
     }
 
     private Token gotoState_MINUS() {
-        char currentLetter = getNextLetter();
-        if(isPartOfDigit(currentLetter)){
-            return gotoState_NUMBER();
-        }
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.MINUS);
     }
 
-    private Token gotoState_NUMBER() {
-        char currentLetter = getNextLetter();
-        return new Token(getFinalToken(), TokenType.NUMBER);
-    }
-
-    private boolean isPartOfDigit(char currentLetter) {
-        return currentLetter=='0' || isPartOfNonZeroDigit(currentLetter);
-    }
-
-    private boolean isPartOfNonZeroDigit(char c) {
-        return c=='1' ||c=='2' ||c=='3' ||c=='4' ||c=='5' ||c=='6' ||c=='7' ||c=='8' ||c=='9';
-    }
 
     private Token gotoState_SQUARE_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.SQUARE_CLOSED_BRACKET);
     }
 
     private Token gotoState_SQUARE_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.SQUARE_OPEN_BRACKET);
     }
 
     private Token gotoState_EQUAL() {
-        char currentLetter = getNextLetter();
-        if(currentLetter == '='){
+        loadNextLetter();
+        if (currentLetter == '=') {
             return gotoState_IS_EQUAL();
         }
         return new Token(getFinalToken(), TokenType.ASSIGN);
     }
 
     private Token gotoState_IS_EQUAL() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.EQUAL);
     }
 
     private Token gotoState_CURLY_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.CURLY_CLOSED_BRACKET);
     }
 
     private Token gotoState_CURLY_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.CURLY_OPEN_BRACKET);
     }
 
     private Token gotoState_ROUND_CLOSED_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.ROUND_CLOSED_BRACKET);
     }
 
     private Token gotoState_ROUND_OPEN_BRACKET() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.ROUND_OPEN_BRACKET);
     }
 
     private Token gotoState_SEMICOLON() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.SEMICOLON);
     }
 
     private Token gotoState_COMMA() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.COMMA);
     }
 
     private Token gotoState_DOT() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         return new Token(getFinalToken(), TokenType.DOT);
     }
 
     private Token gotoState_d() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (currentLetter == 'e') {
             return gotoState_de();
         }
@@ -432,7 +455,7 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_de() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
 
         if (currentLetter == 'f') {
             return gotoState_def();
@@ -441,41 +464,35 @@ public class LexicalAnalyser {
     }
 
     private Token gotoState_def() {
-        char currentLetter = getNextLetter();
+        loadNextLetter();
         if (!isPartOfId(currentLetter)) {
             return new Token(getFinalToken(), TokenType.DEF);
-        }
-        else{
+        } else {
             return gotoState_ID(currentLetter);
         }
     }
 
-    private String getFinalToken() {
-        int finalTokenLenght = tokenInside.length() -1;
-        return tokenInside.substring(0, finalTokenLenght);
-    }
 
     private Token gotoState_ID(char currentLetter) {
-        if (isPartOfId(currentLetter)){
+        if (isPartOfId(currentLetter)) {
             return gotoState_ID();
-        }
-        else {
+        } else {
             return new Token(getFinalToken(), TokenType.ID);
         }
     }
 
     private Token gotoState_ID() {
-        return gotoState_ID(getNextLetter());
+        loadNextLetter();
+        return gotoState_ID(currentLetter);
     }
 
-    private boolean isPartOfId(char currentLetter) {
-        return isLetter(currentLetter) || isDigit(currentLetter) || currentLetter == '_';
+    private Token gotoState_NUMBER(int number) {
+        loadNextLetter();
+        if (isPartOfDigit(currentLetter)) {
+            number = number*10 + Character.getNumericValue(currentLetter);
+            return gotoState_NUMBER(number);
+        }
+        return new Token(number, TokenType.NUMBER);
     }
 
-    private char getNextLetter() {
-        char currentLetter = program.charAt(current);
-        current++;
-        tokenInside += currentLetter;
-        return currentLetter;
-    }
 }

@@ -52,7 +52,7 @@ public class LexicalAnalyserIntegrationTest {
                     add("{");
                     add("turtle");add("=");add("new");add("Turtle");
                     add("(");
-                    add("[");add("-3");add(",");add("200");add("]");
+                    add("[");add("-");add("3");add(",");add("200");add("]");
                     add(")");add(";");
                     add("}");
                 }}},
@@ -64,7 +64,7 @@ public class LexicalAnalyserIntegrationTest {
                     add("{");
                     add("turtle");add("=");add("new");add("Turtle");
                     add("(");
-                    add("[");add("-3");add(",");add("200");add("]");
+                    add("[");add("-");add("3");add(",");add("200");add("]");
                     add(")");add(";");
 
                     add("turtle");add(".");add("rect");
@@ -73,7 +73,7 @@ public class LexicalAnalyserIntegrationTest {
                     add("if");add("!");add("(");add("x");add(">=");add("2");add("&&");
                     add("z");add(">");add("10");add(")");
                     add("||");
-                    add("(");add("y");add("<");add("-2");
+                    add("(");add("y");add("<");add("-");add("2");
                     add("&&");add("z");add("<=");add("3");add(")");
 
                     add("{");add("}");
@@ -117,15 +117,17 @@ public class LexicalAnalyserIntegrationTest {
     public void test() throws WrongTokenExeption {
         // given
         LexicalAnalyser analyzer = new LexicalAnalyser(code);
-        ArrayList<String> tokens = new ArrayList<String>();
+        ArrayList<String> tokens = new ArrayList<>();
 
         // when
-        while(true){
-            try{
-                tokens.add(analyzer.findNextToken().getContent());
-            } catch (MissingEndBracketException missingEndBracketException) {
-                break;
+        Token token = analyzer.findNextToken();
+        while(!token.getType().equals(TokenType.EOF)){
+            if(token.getType() == TokenType.NUMBER){
+                tokens.add(String.valueOf(token.getIntContent()));
+            } else {
+                tokens.add(token.getContent());
             }
+                token = analyzer.findNextToken();
         }
 
         // then
