@@ -6,6 +6,7 @@ import exceptions.WrongTokenExeption;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import static java.lang.Character.*;
 
@@ -19,10 +20,22 @@ public class LexicalAnalyser {
     private int currentLine = 0;
     private int numberOfCharacterInLine = 0;
     CircularFifoQueue lastCharacters = new CircularFifoQueue(LASTCHARACTERS);
+    ArrayList<Token> tokens;
 
     public LexicalAnalyser(String program) {
         StringReader stringBuilder = new StringReader(program);
         reader = new BufferedReader(stringBuilder);
+        this.tokens = new ArrayList<>();
+    }
+
+    public ArrayList<Token> getTokens() throws WrongTokenExeption {
+        this.tokens.clear();
+        Token token = findNextToken();
+        while(!token.getType().equals(TokenType.EOF)){
+            tokens.add(token);
+            token = findNextToken();
+        }
+        return this.tokens;
     }
 
     public Token findNextToken() throws WrongTokenExeption {
@@ -494,5 +507,6 @@ public class LexicalAnalyser {
         }
         return new Token(number, TokenType.NUMBER);
     }
+
 
 }
