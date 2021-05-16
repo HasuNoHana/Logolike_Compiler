@@ -20,12 +20,12 @@ public class LexicalAnalyserTest {
     )
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"def ", "def"},
-                {"definition ", "definition"},
-                {"turtle ", "turtle"},
-                {". ", "."},
-                {", ", ","},
-                {"; ", ";"},
+                {"def", "def"},
+                {"definition", "definition"},
+                {"turtle", "turtle"},
+                {".", "."},
+                {",", ","},
+                {";", ";"},
 
 
         });

@@ -31,9 +31,7 @@ public class LexicalAnalyser {
         }
 
         tokenInside = String.valueOf(currentLetter);
-        deleteSpaces();
-        deleteNewlines();
-        deleteSpaces();
+        deleteWhiteCharacters();
 
         if (currentLetter == 'd') {
             return gotoState_d();
@@ -97,17 +95,12 @@ public class LexicalAnalyser {
         return null; //it will never run because throwWrongTokenExeption will throw an exception
     }
 
-    private void deleteNewlines() {
-        while(currentLetter == '\n'){
-            this.currentLine++;
-            this.numberOfCharacterInLine = 0;
-            loadNextLetter();
-            tokenInside = String.valueOf(currentLetter);
-        }
-    }
-
-    private void deleteSpaces() {
-        while (currentLetter == ' ') {
+    private void deleteWhiteCharacters() {
+        while(Character.isWhitespace(currentLetter)){
+            if(currentLetter == '\r' || currentLetter == '\n'){
+                this.currentLine++;
+                this.numberOfCharacterInLine = 0;
+            }
             loadNextLetter();
             tokenInside = String.valueOf(currentLetter);
         }
