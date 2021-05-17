@@ -212,6 +212,13 @@ public class Parser {
             int number = tokens.get(currentToken).getIntContent();
             currentToken++;
             return new Number(number);
+        } else if (tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET){
+            currentToken++;
+            Expresion e = parseExpresion(tokens);
+            if (tokens.get(currentToken).getType() != TokenType.ROUND_CLOSED_BRACKET)
+                throw new ExpresionExeption("No closing ] bracket");
+            currentToken++;
+            return new Brackets(e);
         }
         throw new ExpresionExeption("No Primary Expreson include token: "+tokens.get(currentToken).getContent());
     }

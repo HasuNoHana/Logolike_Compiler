@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class ParserTreeTest {
 
     @Test
-    public void functionDefinition() throws WrongTokenExeption, functionDefinedUncorrectly, MemberAcessExeption, ExpresionExeption {
+    public void functionDefinition() throws WrongTokenExeption {
         // given
         String programCode = "def function() {turtle}";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
@@ -33,7 +33,7 @@ public class ParserTreeTest {
     }
 
     @Test
-    public void functionDefinitionwithArguments() throws WrongTokenExeption, functionDefinedUncorrectly, MemberAcessExeption, ExpresionExeption {
+    public void functionDefinitionwithArguments() throws WrongTokenExeption {
         // given
         String programCode = "def function(String s, int i) { turtle }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
@@ -50,7 +50,7 @@ public class ParserTreeTest {
     }
 
     @Test
-    public void functionDefinitionwithInsides() throws WrongTokenExeption, functionDefinedUncorrectly, MemberAcessExeption, ExpresionExeption {
+    public void functionDefinitionwithInsides() throws WrongTokenExeption {
         // given
         String programCode = "def function() {turtleRed.c().ab(1) }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
@@ -79,7 +79,7 @@ public class ParserTreeTest {
     }
 
     @Test
-    public void functionDefinitionwithInsidesParameters() throws WrongTokenExeption, functionDefinedUncorrectly, MemberAcessExeption, ExpresionExeption {
+    public void functionDefinitionwithInsidesParameters() throws WrongTokenExeption {
         // given
         String programCode = "def function() {turtleRed.c(1+2) }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
@@ -105,7 +105,7 @@ public class ParserTreeTest {
     }
 
     @Test
-    public void functionDefinitionwithInsidesParametersMultiply() throws WrongTokenExeption, functionDefinedUncorrectly, MemberAcessExeption, ExpresionExeption {
+    public void functionDefinitionwithInsidesParametersMultiply() throws WrongTokenExeption{
         // given
         String programCode = "def function() {turtleRed.c(1+2*3) }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
@@ -132,6 +132,33 @@ public class ParserTreeTest {
         Assert.assertEquals(2, n2.getNumber());
         Assert.assertEquals(TokenType.MULTIPLY, e.getRight().getLeft().getOperand());
         Assert.assertEquals(3, n3.getNumber());
+    }
+
+    @Test
+    public void functionDefinitionwithInsidesParametersBrackets() throws WrongTokenExeption {
+        // given
+        String programCode = "def function() {turtleRed.c((1+2)*3) }";
+        LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
+        Parser parser = new Parser();
+
+        // when
+        ArrayList<Token> tokens = analyzer.getTokens();
+        ArrayList<Function> functions = parser.parse(tokens);
+
+        //then
+        Function function1 = functions.get(0);
+        ProgramFragments programFragments = function1.getInsides().get(0);
+
+        Instruction i = (Instruction) programFragments;
+
+        Assert.assertEquals(i.getMemberAcess().getMembers().get(1).getName(), "c");
+        Expresion e = i.getMemberAcess().getMembers().get(1).getExpresions().get(0);
+
+        Brackets p1 = (Brackets) e.getLeft().getLeft();
+        Assert.assertEquals(PrimaryExpresionType.BRACKETS, p1.getPrimaryExpresionType());
+        Number n = (Number) p1.getExpresion().getLeft().getLeft();
+        Assert.assertEquals(1, n.getNumber());
+
     }
 
 }
