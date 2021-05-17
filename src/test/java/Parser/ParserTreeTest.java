@@ -65,7 +65,7 @@ public class ParserTreeTest {
         ProgramFragments programFragments = function1.getInsides().get(0);
 
         Assert.assertEquals(function1.getName(), "function");
-        Assert.assertEquals(programFragments.getType(), "Instruction");
+        Assert.assertEquals(programFragments.getType(), ProgramFragmentsType.MEMBERACESS);
 
         Instruction i = (Instruction) programFragments;
         Assert.assertEquals(i.getMemberAcess().getMembers().get(0).getName(), "turtleRed");

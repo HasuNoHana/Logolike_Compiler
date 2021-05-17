@@ -2,10 +2,7 @@ package Parser;
 
 import LexicalAnalyzer.Token;
 import LexicalAnalyzer.TokenType;
-import exceptions.ExpresionExeption;
-import exceptions.ParameterException;
-import exceptions.functionDefinedUncorrectly;
-import exceptions.MemberAcessExeption;
+import exceptions.*;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -110,17 +107,49 @@ public class Parser {
 
     private ProgramFragments readProgramFragment(ArrayList<Token> tokens) {
         if (tokens.get(currentToken).getType() == TokenType.FOR) {
+            parseForStatment(tokens);
+        }
+        else if (tokens.get(currentToken).getType() == TokenType.IF) {
             //TODO
         }
-        if (tokens.get(currentToken).getType() == TokenType.IF) {
-            //TODO
-        }
-        if (tokens.get(currentToken).getType() == TokenType.ID) {
-            MemberAcess memberAcess = readMemberAcess(tokens);
-            //TODO assign
-            return new Instruction(memberAcess);
+        else if (tokens.get(currentToken).getType() == TokenType.ID) {
+            return parseInstruction(tokens);
         }
         throw new functionDefinedUncorrectly("No content inside block");
+    }
+
+    private void parseForStatment(ArrayList<Token> tokens) {
+        currentToken++;
+        if (tokens.get(currentToken).getType() != TokenType.ID)
+            throw new ForException("No id in for");
+        String i = tokens.get(currentToken).getContent();
+        currentToken++;
+        if (tokens.get(currentToken).getType() != TokenType.ASSIGN)
+            throw new ForException("No id assignment");
+        currentToken++;
+        Expresion iAssign = parseExpresion(tokens);
+        if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
+            throw new ForException("No id assignment");
+        currentToken++;
+
+        //TODO
+    }
+
+    private Instruction parseInstruction(ArrayList<Token> tokens) {
+        MemberAcess memberAcess = readMemberAcess(tokens);
+        if (tokens.get(currentToken).getType() == TokenType.ASSIGN){
+            currentToken++;
+            Expresion assignment = parseExpresion(tokens);
+            if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
+                throw new InstructionExeption("No semicolon after instruction");
+            currentToken++;
+            return new Instruction(memberAcess, assignment);
+        } else {
+            if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
+                throw new InstructionExeption("No semicolon after instruction");
+            currentToken++;
+            return new Instruction(memberAcess);
+        }
     }
 
     private MemberAcess readMemberAcess(ArrayList<Token> tokens) {
@@ -235,6 +264,10 @@ public class Parser {
             return new SimplePoint(X,Y);
         }
         throw new ExpresionExeption("No Primary Expreson include token: "+tokens.get(currentToken).getContent());
+    }
+
+    private BooleanExpresion parseBooleanExpresion(ArrayList<Token> tokens){
+
     }
 
 }
