@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class Instruction extends ProgramFragments {
 
-    private ArrayList<Member> members;
-    public Instruction(ArrayList<Member> members) {
+    private MemberAcess memberAcess;
+    public Instruction(MemberAcess memberAcess) {
         this.type = "Instruction";
-        this.members = members;
+        this.memberAcess = memberAcess;
     }
 
-    public ArrayList<Member> getMembers() {
-        return members;
+    public MemberAcess getMemberAcess() {
+        return memberAcess;
     }
 }

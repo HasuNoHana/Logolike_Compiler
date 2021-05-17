@@ -2,8 +2,10 @@ package Parser;
 
 import LexicalAnalyzer.Token;
 import LexicalAnalyzer.TokenType;
+import exceptions.ExpresionExeption;
+import exceptions.ParameterException;
 import exceptions.functionDefinedUncorrectly;
-import exceptions.instructionExeption;
+import exceptions.MemberAcessExeption;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -11,55 +13,59 @@ import java.util.Stack;
 public class Parser {
     private ArrayList<Function> functions;
     private int currentToken;
-    private Stack<TokenType> stack;
+    private Stack<TokenType> bracketsStack;
 
     public Parser() {
         this.functions = new ArrayList<Function>();
         this.currentToken = 0;
-        this.stack = new Stack<>();
+        this.bracketsStack = new Stack<>();
     }
 
-    public ArrayList<Function> parse(ArrayList<Token> tokens) throws functionDefinedUncorrectly, instructionExeption {
+    public ArrayList<Function> parse(ArrayList<Token> tokens) {
         functions.clear();
         functions.add(getFunction(tokens));
         return functions;
     }
 
-    private Function getFunction(ArrayList<Token> tokens) throws functionDefinedUncorrectly, instructionExeption {
-        if(tokens.get(currentToken).getType()!= TokenType.DEF)
+    private Function getFunction(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() != TokenType.DEF)
             throw new functionDefinedUncorrectly("statment def is missing");
         currentToken++;
 
-        if(tokens.get(currentToken).getType()!= TokenType.ID)
+        if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new functionDefinedUncorrectly("function name is missing");
         String name = tokens.get(currentToken).getContent();
         currentToken++;
 
         ArrayList<Argument> arguments = readArguments(tokens);
-        ArrayList<ProgramFragments>  insides = getInsides(tokens);
+        ArrayList<ProgramFragments> insides = getInsides(tokens);
 
         return new Function(name, arguments, insides);
     }
 
-    private ArrayList<Argument> readArguments(ArrayList<Token> tokens) throws functionDefinedUncorrectly {
-        if(tokens.get(currentToken).getType()!= TokenType.ROUND_OPEN_BRACKET)
+
+    //////////////////////////////////////ARGUMENTS/////////////////////////////////////////////////////
+
+
+    private ArrayList<Argument> readArguments(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() != TokenType.ROUND_OPEN_BRACKET)
             throw new functionDefinedUncorrectly("bracket ( is missing");
-        stack.add(tokens.get(currentToken).getType());
+        bracketsStack.add(tokens.get(currentToken).getType());
         currentToken++;
-        ArrayList<Argument>  arguments = new ArrayList<Argument>();
+        ArrayList<Argument> arguments = new ArrayList<Argument>();
         boolean hasToBeNextArgument = false;
 
-        while(tokens.get(currentToken).getType() != TokenType.EOF){
-            if(tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET){
-                stack.pop();
+        while (tokens.get(currentToken).getType() != TokenType.EOF) {
+            if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET) {
+                bracketsStack.pop();
                 currentToken++;
-                if(hasToBeNextArgument)
+                if (hasToBeNextArgument)
                     throw new functionDefinedUncorrectly("comma without next argument");
                 return arguments;
             }
             arguments.add(readArgument(tokens));
             hasToBeNextArgument = false;
-            if(tokens.get(currentToken).getType() == TokenType.COMMA){
+            if (tokens.get(currentToken).getType() == TokenType.COMMA) {
                 hasToBeNextArgument = true;
                 currentToken++;
             }
@@ -67,30 +73,34 @@ public class Parser {
         throw new functionDefinedUncorrectly("bracket ) is missing");
     }
 
-    private Argument readArgument(ArrayList<Token> tokens) throws functionDefinedUncorrectly {
-        if(tokens.get(currentToken).getType()!= TokenType.ID)
+    private Argument readArgument(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new functionDefinedUncorrectly("wrong function argument");
         String type = tokens.get(currentToken).getContent();
         currentToken++;
-        if(tokens.get(currentToken).getType()!= TokenType.ID)
+        if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new functionDefinedUncorrectly("wrong function argument");
         String name = tokens.get(currentToken).getContent();
         currentToken++;
         return new Argument(type, name);
     }
 
-    private ArrayList<ProgramFragments> getInsides(ArrayList<Token> tokens) throws functionDefinedUncorrectly, instructionExeption {
-        if(tokens.get(currentToken).getType()!= TokenType.CURLY_OPEN_BRACKET)
-            throw new functionDefinedUncorrectly("bracket { is missing");
-        stack.add(tokens.get(currentToken).getType());
-        currentToken++;
-        ArrayList<ProgramFragments>  insides = new ArrayList<ProgramFragments>();
 
-        while(tokens.get(currentToken).getType() != TokenType.EOF){
+    //////////////////////////////////////INSIDES/////////////////////////////////////////////////////
+
+
+    private ArrayList<ProgramFragments> getInsides(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() != TokenType.CURLY_OPEN_BRACKET)
+            throw new functionDefinedUncorrectly("bracket { is missing");
+        bracketsStack.add(tokens.get(currentToken).getType());
+        currentToken++;
+        ArrayList<ProgramFragments> insides = new ArrayList<ProgramFragments>();
+
+        while (tokens.get(currentToken).getType() != TokenType.EOF) {
             insides.add(readProgramFragment(tokens));
 
-            if(tokens.get(currentToken).getType() == TokenType.CURLY_CLOSED_BRACKET){
-                stack.pop();
+            if (tokens.get(currentToken).getType() == TokenType.CURLY_CLOSED_BRACKET) {
+                bracketsStack.pop();
                 currentToken++;
                 return insides;
             }
@@ -98,34 +108,33 @@ public class Parser {
         throw new functionDefinedUncorrectly("bracket } is missing");
     }
 
-    private ProgramFragments readProgramFragment(ArrayList<Token> tokens) throws functionDefinedUncorrectly, instructionExeption {
-        if(tokens.get(currentToken).getType() == TokenType.FOR) {
-            return null;
+    private ProgramFragments readProgramFragment(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() == TokenType.FOR) {
+            //TODO
         }
-        if(tokens.get(currentToken).getType() == TokenType.IF) {
-            return null;
+        if (tokens.get(currentToken).getType() == TokenType.IF) {
+            //TODO
         }
-        if(tokens.get(currentToken).getType() == TokenType.ID) {
-            ArrayList<Member> members = readMembers(tokens);
+        if (tokens.get(currentToken).getType() == TokenType.ID) {
+            MemberAcess memberAcess = readMemberAcess(tokens);
             //TODO assign
-            return new Instruction(members);
+            return new Instruction(memberAcess);
         }
         throw new functionDefinedUncorrectly("No content inside block");
     }
 
-    private ArrayList<Member> readMembers(ArrayList<Token> tokens) throws instructionExeption {
-        ArrayList<Member> members = new ArrayList<Member>();
-        while (tokens.get(currentToken).getType() != TokenType.ASSIGN && tokens.get(currentToken).getType() != TokenType.SEMICOLON){
-            String name = tokens.get(currentToken).getContent();
-            currentToken++;
-            if(tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET){
-                ArrayList<Parameter> parameters = readParameters(tokens);
-                members.add(new Member(name, parameters));
-            } else{
-                members.add(new Member(name));
-            }
+    private MemberAcess readMemberAcess(ArrayList<Token> tokens) {
+        ArrayList<Member> members = readMembers(tokens);
+        return new MemberAcess(members);
+    }
 
-            if(tokens.get(currentToken).getType() != TokenType.DOT){
+    private ArrayList<Member> readMembers(ArrayList<Token> tokens) {
+        ArrayList<Member> members = new ArrayList<Member>();
+        while (tokens.get(currentToken).getType() == TokenType.ID) {
+
+            members = readMember(tokens, members);
+
+            if (tokens.get(currentToken).getType() != TokenType.DOT) {
                 break;
             }
             currentToken++;
@@ -133,43 +142,72 @@ public class Parser {
         return members;
     }
 
-    private ArrayList<Parameter> readParameters(ArrayList<Token> tokens) throws instructionExeption {
-        stack.add(tokens.get(currentToken).getType());
+    private ArrayList<Member> readMember(ArrayList<Token> tokens, ArrayList<Member> members) {
+        String name = tokens.get(currentToken).getContent();
         currentToken++;
-        ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+        if (tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET) {
+            ArrayList<Expresion> parameters = readParameters(tokens);
+            members.add(new Member(name, parameters));
+        } else {
+            members.add(new Member(name));
+        }
+        return members;
+    }
+
+    private ArrayList<Expresion> readParameters(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() != TokenType.ROUND_OPEN_BRACKET) {
+            throw new ParameterException("There in no opening ( bracket");
+        }
+        bracketsStack.add(tokens.get(currentToken).getType());
+        currentToken++;
+        ArrayList<Expresion> parameters = new ArrayList<Expresion>();
         boolean hasToBeAnother = false;
-        while (tokens.get(currentToken).getType() != TokenType.EOF){
-            if(tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET){
-                stack.pop();
+        while (tokens.get(currentToken).getType() != TokenType.EOF) {
+            if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET) {
+                bracketsStack.pop();
                 currentToken++;
-                if(hasToBeAnother)
-                    throw new instructionExeption("No parameter after comma");
+                if (hasToBeAnother)
+                    throw new MemberAcessExeption("No parameter after comma");
                 return parameters;
             }
-
-            parameters.add(readExpresion(tokens));
-            if(tokens.get(currentToken).getType() == TokenType.COMMA){
+            parameters.add(parseExpresion(tokens));
+            if (tokens.get(currentToken).getType() == TokenType.COMMA) {
                 hasToBeAnother = true;
                 currentToken++;
             }
         }
-        throw new instructionExeption("Unexpected EOF");
+        throw new MemberAcessExeption("Unexpected EOF");
     }
 
-    private Parameter readExpresion(ArrayList<Token> tokens) {
-        if(tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET){
-            stack.add(tokens.get(currentToken).getType());
+    private Expresion parseExpresion(ArrayList<Token> tokens) {
+        MulExpresion left = parseMulExpresion(tokens);
+        Expresion exp = new Expresion(left);
+        if (tokens.get(currentToken).getType() == TokenType.PLUS || tokens.get(currentToken).getType() == TokenType.MINUS){
+            exp.setOperand(tokens.get(currentToken).getType());
             currentToken++;
-        } else if (tokens.get(currentToken).getType() == TokenType.SQUARE_OPEN_BRACKET){
-
-        } else if (tokens.get(currentToken).getType() == TokenType.ID){
-
-        } else if (tokens.get(currentToken).getType() == TokenType.NUMBER){
-
-        } else if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET){
-
+            exp.setRight(parseExpresion(tokens));
         }
+        return exp;
     }
 
+    private MulExpresion parseMulExpresion(ArrayList<Token> tokens) {
+        PrimaryExpresion left = parsePrimaryExpresion(tokens);
+        MulExpresion exp = new MulExpresion(left);
+        if (tokens.get(currentToken).getType() == TokenType.MULTIPLY || tokens.get(currentToken).getType() == TokenType.DIVIDE){
+            exp.setOperand(tokens.get(currentToken).getType());
+            currentToken++;
+            exp.setRight(parseMulExpresion(tokens));
+        }
+        return exp;
+    }
+
+    private PrimaryExpresion parsePrimaryExpresion(ArrayList<Token> tokens) {
+        if (tokens.get(currentToken).getType() == TokenType.NUMBER){
+            int number = tokens.get(currentToken).getIntContent();
+            currentToken++;
+            return new Number(number);
+        }
+        throw new ExpresionExeption("No Primary Expreson include token: "+tokens.get(currentToken).getContent());
+    }
 
 }

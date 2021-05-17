@@ -4,23 +4,23 @@ import java.util.ArrayList;
 
 public class Member {
     String name;
-    ArrayList<Parameter> parameters;
+    ArrayList<Expresion> expresions;
 
-    public Member(String name, ArrayList<Parameter> parameters) {
+    public Member(String name, ArrayList<Expresion> expresions) {
         this.name = name;
-        this.parameters = parameters;
+        this.expresions = expresions;
     }
 
     public Member(String name) {
         this.name = name;
-        this.parameters = new ArrayList<Parameter>();
+        this.expresions = new ArrayList<Expresion>();
     }
 
     public String getName() {
         return name;
     }
 
-    public ArrayList<Parameter> getParameters() {
-        return parameters;
+    public ArrayList<Expresion> getExpresions() {
+        return expresions;
     }
 }
