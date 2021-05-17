@@ -1,5 +1,7 @@
 package Parser;
 
+import Parser.Expresion.Expresion;
+
 import java.util.ArrayList;
 
 public class Member {

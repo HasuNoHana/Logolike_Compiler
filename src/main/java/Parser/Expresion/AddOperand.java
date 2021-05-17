@@ -1,4 +1,4 @@
-package Parser;
+package Parser.Expresion;
 
 public enum AddOperand {
     ADD, SUBSTRACT;

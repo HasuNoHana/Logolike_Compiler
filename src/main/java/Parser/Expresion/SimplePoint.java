@@ -1,6 +1,10 @@
-package Parser;
+package Parser.Expresion;
 
-public class SimplePoint extends PrimaryExpresion{
+import Parser.Expresion.Expresion;
+import Parser.Expresion.PrimaryExpresion;
+import Parser.Expresion.PrimaryExpresionType;
+
+public class SimplePoint extends PrimaryExpresion {
     private Expresion x;
     private Expresion y;
 

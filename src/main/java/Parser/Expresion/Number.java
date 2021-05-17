@@ -1,6 +1,6 @@
-package Parser;
+package Parser.Expresion;
 
-public class Number extends PrimaryExpresion{
+public class Number extends PrimaryExpresion {
     public int getNumber() {
         return number;
     }

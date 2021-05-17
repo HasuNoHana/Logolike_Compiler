@@ -1,8 +1,11 @@
 package Parser;
 
+import Parser.Expresion.PrimaryExpresion;
+import Parser.Expresion.PrimaryExpresionType;
+
 import java.util.ArrayList;
 
-public class MemberAcess extends PrimaryExpresion{
+public class MemberAcess extends PrimaryExpresion {
     private ArrayList<Member> members;
 
     public MemberAcess(ArrayList<Member> members) {

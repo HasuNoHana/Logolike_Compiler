@@ -2,6 +2,9 @@ package Parser;
 
 import LexicalAnalyzer.Token;
 import LexicalAnalyzer.TokenType;
+import Parser.BooleanExpresion.*;
+import Parser.Expresion.*;
+import Parser.Expresion.Number;
 import exceptions.*;
 
 import java.util.ArrayList;
@@ -108,11 +111,9 @@ public class Parser {
     private ProgramFragments readProgramFragment(ArrayList<Token> tokens) {
         if (tokens.get(currentToken).getType() == TokenType.FOR) {
             parseForStatment(tokens);
-        }
-        else if (tokens.get(currentToken).getType() == TokenType.IF) {
+        } else if (tokens.get(currentToken).getType() == TokenType.IF) {
             //TODO
-        }
-        else if (tokens.get(currentToken).getType() == TokenType.ID) {
+        } else if (tokens.get(currentToken).getType() == TokenType.ID) {
             return parseInstruction(tokens);
         }
         throw new functionDefinedUncorrectly("No content inside block");
@@ -137,7 +138,7 @@ public class Parser {
 
     private Instruction parseInstruction(ArrayList<Token> tokens) {
         MemberAcess memberAcess = readMemberAcess(tokens);
-        if (tokens.get(currentToken).getType() == TokenType.ASSIGN){
+        if (tokens.get(currentToken).getType() == TokenType.ASSIGN) {
             currentToken++;
             Expresion assignment = parseExpresion(tokens);
             if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
@@ -212,11 +213,11 @@ public class Parser {
     private Expresion parseExpresion(ArrayList<Token> tokens) {
         MulExpresion left = parseMulExpresion(tokens);
         Expresion exp;
-        if (tokens.get(currentToken).getType() == TokenType.PLUS || tokens.get(currentToken).getType() == TokenType.MINUS){
+        if (tokens.get(currentToken).getType() == TokenType.PLUS || tokens.get(currentToken).getType() == TokenType.MINUS) {
             TokenType operand = tokens.get(currentToken).getType();
             currentToken++;
             Expresion right = parseExpresion(tokens);
-            exp = new Expresion(left,operand,right);
+            exp = new Expresion(left, operand, right);
         } else {
             exp = new Expresion(left);
         }
@@ -226,7 +227,7 @@ public class Parser {
     private MulExpresion parseMulExpresion(ArrayList<Token> tokens) {
         PrimaryExpresion left = parsePrimaryExpresion(tokens);
         MulExpresion exp;
-        if (tokens.get(currentToken).getType() == TokenType.MULTIPLY || tokens.get(currentToken).getType() == TokenType.DIVIDE){
+        if (tokens.get(currentToken).getType() == TokenType.MULTIPLY || tokens.get(currentToken).getType() == TokenType.DIVIDE) {
             TokenType operand = tokens.get(currentToken).getType();
             currentToken++;
             MulExpresion right = parseMulExpresion(tokens);
@@ -238,36 +239,107 @@ public class Parser {
     }
 
     private PrimaryExpresion parsePrimaryExpresion(ArrayList<Token> tokens) {
-        if (tokens.get(currentToken).getType() == TokenType.NUMBER){
+        if (tokens.get(currentToken).getType() == TokenType.NUMBER) {
             int number = tokens.get(currentToken).getIntContent();
             currentToken++;
             return new Number(number);
-        } else if (tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET){
+        } else if (tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET) {
             currentToken++;
             Expresion e = parseExpresion(tokens);
             if (tokens.get(currentToken).getType() != TokenType.ROUND_CLOSED_BRACKET)
                 throw new ExpresionExeption("No closing ] bracket");
             currentToken++;
             return new Brackets(e);
-        } else if(tokens.get(currentToken).getType() == TokenType.ID){
+        } else if (tokens.get(currentToken).getType() == TokenType.ID) {
             return readMemberAcess(tokens);
-        } else if(tokens.get(currentToken).getType() == TokenType.SQUARE_OPEN_BRACKET){
+        } else if (tokens.get(currentToken).getType() == TokenType.SQUARE_OPEN_BRACKET) {
             currentToken++;
             Expresion X = parseExpresion(tokens);
-            if(tokens.get(currentToken).getType() != TokenType.COMMA)
+            if (tokens.get(currentToken).getType() != TokenType.COMMA)
                 throw new ExpresionExeption("No comma between X and Y in point");
             currentToken++;
             Expresion Y = parseExpresion(tokens);
-            if(tokens.get(currentToken).getType() != TokenType.SQUARE_CLOSED_BRACKET)
+            if (tokens.get(currentToken).getType() != TokenType.SQUARE_CLOSED_BRACKET)
                 throw new ExpresionExeption("No closing bracket ] ");
             currentToken++;
-            return new SimplePoint(X,Y);
+            return new SimplePoint(X, Y);
         }
-        throw new ExpresionExeption("No Primary Expreson include token: "+tokens.get(currentToken).getContent());
+        throw new ExpresionExeption("No Primary Expreson include token: " + tokens.get(currentToken).getContent());
     }
 
-    private BooleanExpresion parseBooleanExpresion(ArrayList<Token> tokens){
-
+    private BooleanExpresion parseBooleanExpresion(ArrayList<Token> tokens) {
+        AndExpresion left = parseAndExpresion(tokens);
+        BooleanExpresion exp;
+        if (tokens.get(currentToken).getType() == TokenType.OR) {
+            TokenType operand = TokenType.OR;
+            currentToken++;
+            BooleanExpresion right = parseBooleanExpresion(tokens);
+            exp = new BooleanExpresion(left, operand, right);
+        } else {
+            exp = new BooleanExpresion(left);
+        }
+        return exp;
     }
 
+    private AndExpresion parseAndExpresion(ArrayList<Token> tokens) {
+        Comparison left = parseComparison(tokens);
+        AndExpresion exp;
+        if (tokens.get(currentToken).getType() == TokenType.AND) {
+            TokenType operand = TokenType.AND;
+            currentToken++;
+            AndExpresion right = parseAndExpresion(tokens);
+            exp = new AndExpresion(left, operand, right);
+        } else {
+            exp = new AndExpresion(left);
+        }
+        return exp;
+    }
+
+    private Comparison parseComparison(ArrayList<Token> tokens) {
+        PrimaryBoolean left = parsePrimaryBoolean(tokens);
+        Comparison exp;
+        if (isComparisonOperand(tokens.get(currentToken).getType())) {
+            TokenType operand = tokens.get(currentToken).getType();
+            currentToken++;
+            Comparison right = parseComparison(tokens);
+            exp = new Comparison(left, operand, right);
+        } else {
+            exp = new Comparison(left);
+        }
+        return exp;
+    }
+
+    private PrimaryBoolean parsePrimaryBoolean(ArrayList<Token> tokens) {
+        boolean negate = false;
+        if (tokens.get(currentToken).getType() == TokenType.NEGATION) {
+            negate = true;
+            currentToken++;
+        }
+
+        if (tokens.get(currentToken).getType() == TokenType.TRUE || tokens.get(currentToken).getType() == TokenType.FALSE) {
+            TokenType content = tokens.get(currentToken).getType();
+            currentToken++;
+            return new SimpleBoolean(content, negate);
+        } else if (tokens.get(currentToken).getType() == TokenType.ROUND_OPEN_BRACKET) {
+            currentToken++;
+            BooleanExpresion booleanExeption = parseBooleanExpresion(tokens);
+            if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET)
+                throw new BooleanExeption("No closing bracket in boolean expresion");
+            currentToken++;
+            return new Parser.BooleanExpresion.Brackets(booleanExeption, negate);
+        } else{
+            try{
+                Expresion exp = parseExpresion(tokens);
+            } catch (RuntimeException e){
+                throw new BooleanExeption("Can't parse expresion in boolean expresion");
+            }
+        }
+        throw new BooleanExeption("No Primary Boolean include token: " + tokens.get(currentToken).getContent());
+    }
+
+    private boolean isComparisonOperand(TokenType type) {
+        return type == TokenType.LESSER || type == TokenType.LESSER_EQUAL || type == TokenType.GREATER || type == TokenType.GREATER_EQUAL || type == TokenType.EQUAL || type == TokenType.NOT_EQUALS;
+    }
+
+    
 }

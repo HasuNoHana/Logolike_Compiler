@@ -3,10 +3,11 @@ package Parser;
 import LexicalAnalyzer.LexicalAnalyser;
 import LexicalAnalyzer.Token;
 import LexicalAnalyzer.TokenType;
-import exceptions.ExpresionExeption;
+import Parser.Expresion.Expresion;
+import Parser.Expresion.Number;
+import Parser.Expresion.PrimaryExpresionType;
+import Parser.Expresion.SimplePoint;
 import exceptions.WrongTokenExeption;
-import exceptions.functionDefinedUncorrectly;
-import exceptions.MemberAcessExeption;
 import org.junit.Assert;
 import org.junit.Test;
 

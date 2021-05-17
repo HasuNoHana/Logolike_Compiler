@@ -1,4 +1,4 @@
-package Parser;
+package Parser.Expresion;
 
 public abstract class PrimaryExpresion {
     protected PrimaryExpresionType primaryExpresionType;
