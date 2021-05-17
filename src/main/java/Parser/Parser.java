@@ -113,11 +113,24 @@ public class Parser {
         if (tokens.get(currentToken).getType() == TokenType.FOR) {
             return parseForStatment(tokens);
         } else if (tokens.get(currentToken).getType() == TokenType.IF) {
-            //TODO
+            return parseIfStatment(tokens);
         } else if (tokens.get(currentToken).getType() == TokenType.ID) {
             return parseInstruction(tokens);
         }
         throw new functionDefinedUncorrectly("No content inside block");
+    }
+
+    private IfStatment parseIfStatment(ArrayList<Token> tokens) {
+        currentToken++;
+        BooleanExpresion condition = parseBooleanExpresion(tokens);
+        ArrayList<ProgramFragments> insides = getInsides(tokens);
+        if (tokens.get(currentToken).getType() == TokenType.ELSE) {
+            currentToken++;
+            ArrayList<ProgramFragments> elseInsides = getInsides(tokens);
+            return new IfStatment(condition, insides, elseInsides);
+        } else {
+            return new IfStatment(condition, insides);
+        }
     }
 
     private ForStatment parseForStatment(ArrayList<Token> tokens) {
