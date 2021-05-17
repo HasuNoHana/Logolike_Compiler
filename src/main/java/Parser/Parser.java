@@ -34,6 +34,11 @@ public class Parser {
         currentToken++;
 
         if (tokens.get(currentToken).getType() != TokenType.ID)
+            throw new functionDefinedUncorrectly("function type is missing");
+        String type = tokens.get(currentToken).getContent();
+        currentToken++;
+
+        if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new functionDefinedUncorrectly("function name is missing");
         String name = tokens.get(currentToken).getContent();
         currentToken++;
@@ -41,7 +46,7 @@ public class Parser {
         ArrayList<Argument> arguments = readArguments(tokens);
         ArrayList<ProgramFragments> insides = getInsides(tokens);
 
-        return new Function(name, arguments, insides);
+        return new Function(name, type, arguments, insides);
     }
 
 

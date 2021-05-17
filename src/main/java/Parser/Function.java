@@ -5,11 +5,13 @@ import java.util.List;
 
 public class Function {
     private String name;
+    private String type;
     private ArrayList<ProgramFragments> programFragments;
     private ArrayList<Argument> arguments;
 
-    public Function(String name, ArrayList<Argument> arguments, ArrayList<ProgramFragments> insides) {
+    public Function(String name, String type, ArrayList<Argument> arguments, ArrayList<ProgramFragments> insides) {
         this.name = name;
+        this.type = type;
         this.programFragments = insides;
         this.arguments = arguments;
     }

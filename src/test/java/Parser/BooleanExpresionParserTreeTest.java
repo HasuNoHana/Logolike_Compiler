@@ -17,7 +17,7 @@ public class BooleanExpresionParserTreeTest {
     @Test
     public void functionDefinition() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {for i=2; i<3; 1{" +
+        String programCode = "def int function() {for i=2; i<3; 1{" +
                 " turtle; }}";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
