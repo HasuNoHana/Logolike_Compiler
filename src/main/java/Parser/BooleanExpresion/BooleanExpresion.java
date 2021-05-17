@@ -16,4 +16,16 @@ public class BooleanExpresion {
         this.right = right;
         this.operand = operand;
     }
+
+    public TokenType getOperand() {
+        return operand;
+    }
+
+    public AndExpresion getLeft() {
+        return left;
+    }
+
+    public BooleanExpresion getRight() {
+        return right;
+    }
 }

@@ -1,5 +1,5 @@
 package Parser;
 
 public enum ProgramFragmentsType {
-    MEMBERACESS, ASSIGNMENT;
+    MEMBERACESS, ASSIGNMENT, FOR;
 }

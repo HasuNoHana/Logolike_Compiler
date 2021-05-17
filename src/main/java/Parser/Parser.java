@@ -6,6 +6,7 @@ import Parser.BooleanExpresion.*;
 import Parser.Expresion.*;
 import Parser.Expresion.Number;
 import exceptions.*;
+import Parser.BooleanExpresion.*;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -110,7 +111,7 @@ public class Parser {
 
     private ProgramFragments readProgramFragment(ArrayList<Token> tokens) {
         if (tokens.get(currentToken).getType() == TokenType.FOR) {
-            parseForStatment(tokens);
+            return parseForStatment(tokens);
         } else if (tokens.get(currentToken).getType() == TokenType.IF) {
             //TODO
         } else if (tokens.get(currentToken).getType() == TokenType.ID) {
@@ -119,7 +120,7 @@ public class Parser {
         throw new functionDefinedUncorrectly("No content inside block");
     }
 
-    private void parseForStatment(ArrayList<Token> tokens) {
+    private ForStatment parseForStatment(ArrayList<Token> tokens) {
         currentToken++;
         if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new ForException("No id in for");
@@ -130,10 +131,15 @@ public class Parser {
         currentToken++;
         Expresion iAssign = parseExpresion(tokens);
         if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
-            throw new ForException("No id assignment");
+            throw new ForException("No id assignment semicolon");
         currentToken++;
-
-        //TODO
+        BooleanExpresion condition = parseBooleanExpresion(tokens);
+        if (tokens.get(currentToken).getType() != TokenType.SEMICOLON)
+            throw new ForException("No bolean expresion semicolon");
+        currentToken++;
+        Expresion iUpdating = parseExpresion(tokens);
+        ArrayList<ProgramFragments> insides = getInsides(tokens);
+        return new ForStatment(i, iAssign, condition, iUpdating, insides);
     }
 
     private Instruction parseInstruction(ArrayList<Token> tokens) {
@@ -326,15 +332,14 @@ public class Parser {
             if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET)
                 throw new BooleanExeption("No closing bracket in boolean expresion");
             currentToken++;
-            return new Parser.BooleanExpresion.Brackets(booleanExeption, negate);
+            return new BooleanBrackets(booleanExeption, negate);
         } else{
             try{
-                Expresion exp = parseExpresion(tokens);
+                return new ExpesionInBoolean(parseExpresion(tokens), negate);
             } catch (RuntimeException e){
                 throw new BooleanExeption("Can't parse expresion in boolean expresion");
             }
         }
-        throw new BooleanExeption("No Primary Boolean include token: " + tokens.get(currentToken).getContent());
     }
 
     private boolean isComparisonOperand(TokenType type) {

@@ -18,7 +18,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinition() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtle}";
+        String programCode = "def function() {turtle;}";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -36,7 +36,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithArguments() throws WrongTokenExeption {
         // given
-        String programCode = "def function(String s, int i) { turtle }";
+        String programCode = "def function(String s, int i) { turtle; }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -53,7 +53,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsides() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtleRed.c().ab(1) }";
+        String programCode = "def function() {turtleRed.c().ab(1); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -82,7 +82,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsidesParameters() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtleRed.c(1+2) }";
+        String programCode = "def function() {turtleRed.c(1+2); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -108,7 +108,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsidesParametersMultiply() throws WrongTokenExeption{
         // given
-        String programCode = "def function() {turtleRed.c(1+2*3) }";
+        String programCode = "def function() {turtleRed.c(1+2*3); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -138,7 +138,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsidesParametersBrackets() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtleRed.c((1+2)*3) }";
+        String programCode = "def function() {turtleRed.c((1+2)*3); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -164,7 +164,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsidesManyParameters() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtleRed([1,1], ala) }";
+        String programCode = "def function() {turtleRed([1,1], ala); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 
@@ -197,7 +197,7 @@ public class ParserTreeTest {
     @Test
     public void functionDefinitionwithInsidesManyNumericalParameters() throws WrongTokenExeption {
         // given
-        String programCode = "def function() {turtleRed(1, 2) }";
+        String programCode = "def function() {turtleRed(1, 2); }";
         LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
         Parser parser = new Parser();
 

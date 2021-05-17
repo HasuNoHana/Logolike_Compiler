@@ -16,4 +16,16 @@ public class AndExpresion {
         this.right = right;
         this.operand = operand;
     }
+
+    public TokenType getOperand() {
+        return operand;
+    }
+
+    public Comparison getLeft() {
+        return left;
+    }
+
+    public AndExpresion getRight() {
+        return right;
+    }
 }

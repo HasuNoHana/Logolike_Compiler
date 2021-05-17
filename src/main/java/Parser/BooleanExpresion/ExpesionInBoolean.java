@@ -1,10 +1,12 @@
 package Parser.BooleanExpresion;
 
+import Parser.Expresion.Expresion;
+
 public class ExpesionInBoolean extends PrimaryBoolean{
 
-    private Exception exception;
+    private Expresion exception;
 
-    public ExpesionInBoolean(Exception exception, boolean negate) {
+    public ExpesionInBoolean(Expresion exception, boolean negate) {
         this.exception = exception;
         this.negate = negate;
     }
@@ -14,7 +16,7 @@ public class ExpesionInBoolean extends PrimaryBoolean{
         return PrimaryBooleanType.EXPRESION;
     }
 
-    public Exception getException() {
+    public Expresion getException() {
         return exception;
     }
 }

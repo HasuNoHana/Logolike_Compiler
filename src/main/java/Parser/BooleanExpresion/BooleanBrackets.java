@@ -1,10 +1,10 @@
 package Parser.BooleanExpresion;
 
-public class Brackets extends PrimaryBoolean{
+public class BooleanBrackets extends PrimaryBoolean{
 
     private BooleanExpresion expresion;
 
-    public Brackets(BooleanExpresion expresion, boolean negate) {
+    public BooleanBrackets(BooleanExpresion expresion, boolean negate) {
         this.expresion = expresion;
         this.negate = negate;
     }

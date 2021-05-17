@@ -16,4 +16,16 @@ public class Comparison {
     public Comparison(PrimaryBoolean left) {
         this.left = left;
     }
+
+    public TokenType getOperand() {
+        return operand;
+    }
+
+    public PrimaryBoolean getLeft() {
+        return left;
+    }
+
+    public Comparison getRight() {
+        return right;
+    }
 }
