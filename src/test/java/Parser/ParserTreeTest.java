@@ -158,6 +158,68 @@ public class ParserTreeTest {
         Assert.assertEquals(PrimaryExpresionType.BRACKETS, p1.getPrimaryExpresionType());
         Number n = (Number) p1.getExpresion().getLeft().getLeft();
         Assert.assertEquals(1, n.getNumber());
+    }
+
+    @Test
+    public void functionDefinitionwithInsidesManyParameters() throws WrongTokenExeption {
+        // given
+        String programCode = "def function() {turtleRed([1,1], ala) }";
+        LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
+        Parser parser = new Parser();
+
+        // when
+        ArrayList<Token> tokens = analyzer.getTokens();
+        ArrayList<Function> functions = parser.parse(tokens);
+
+        //then
+        Function function1 = functions.get(0);
+        ProgramFragments programFragments = function1.getInsides().get(0);
+        Instruction i = (Instruction) programFragments;
+
+        Assert.assertEquals(i.getMemberAcess().getMembers().get(0).getName(), "turtleRed");
+        ArrayList<Member> members = i.getMemberAcess().getMembers();
+        Expresion e = members.get(0).getExpresions().get(0);
+        SimplePoint p = (SimplePoint) e.getLeft().getLeft();
+
+        Assert.assertEquals(PrimaryExpresionType.POINT, p.getPrimaryExpresionType());
+        Number n = (Number)p.getX().getLeft().getLeft();
+        Number n2 = (Number)p.getY().getLeft().getLeft();
+        Assert.assertEquals(1, n.getNumber());
+        Assert.assertEquals(1, n2.getNumber());
+
+        Expresion e2 = members.get(0).getExpresions().get(1);
+        MemberAcess memberAcess = (MemberAcess) e2.getLeft().getLeft();
+        Assert.assertEquals("ala", memberAcess.getMembers().get(0).getName());
+
+    }
+
+    @Test
+    public void functionDefinitionwithInsidesManyNumericalParameters() throws WrongTokenExeption {
+        // given
+        String programCode = "def function() {turtleRed(1, 2) }";
+        LexicalAnalyser analyzer = new LexicalAnalyser(programCode);
+        Parser parser = new Parser();
+
+        // when
+        ArrayList<Token> tokens = analyzer.getTokens();
+        ArrayList<Function> functions = parser.parse(tokens);
+
+        //then
+        Function function1 = functions.get(0);
+        ProgramFragments programFragments = function1.getInsides().get(0);
+        Instruction i = (Instruction) programFragments;
+
+        Assert.assertEquals(i.getMemberAcess().getMembers().get(0).getName(), "turtleRed");
+        ArrayList<Member> members = i.getMemberAcess().getMembers();
+        Expresion e = members.get(0).getExpresions().get(0);
+        Number p = (Number) e.getLeft().getLeft();
+
+        Assert.assertEquals(1, p.getNumber());
+
+        Expresion e2 = members.get(0).getExpresions().get(1);
+        Number p2 = (Number) e2.getLeft().getLeft();
+
+        Assert.assertEquals(2, p2.getNumber());
 
     }
 

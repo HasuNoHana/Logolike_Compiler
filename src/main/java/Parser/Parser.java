@@ -171,6 +171,7 @@ public class Parser {
                 return parameters;
             }
             parameters.add(parseExpresion(tokens));
+            hasToBeAnother = false;
             if (tokens.get(currentToken).getType() == TokenType.COMMA) {
                 hasToBeAnother = true;
                 currentToken++;
@@ -219,6 +220,19 @@ public class Parser {
                 throw new ExpresionExeption("No closing ] bracket");
             currentToken++;
             return new Brackets(e);
+        } else if(tokens.get(currentToken).getType() == TokenType.ID){
+            return readMemberAcess(tokens);
+        } else if(tokens.get(currentToken).getType() == TokenType.SQUARE_OPEN_BRACKET){
+            currentToken++;
+            Expresion X = parseExpresion(tokens);
+            if(tokens.get(currentToken).getType() != TokenType.COMMA)
+                throw new ExpresionExeption("No comma between X and Y in point");
+            currentToken++;
+            Expresion Y = parseExpresion(tokens);
+            if(tokens.get(currentToken).getType() != TokenType.SQUARE_CLOSED_BRACKET)
+                throw new ExpresionExeption("No closing bracket ] ");
+            currentToken++;
+            return new SimplePoint(X,Y);
         }
         throw new ExpresionExeption("No Primary Expreson include token: "+tokens.get(currentToken).getContent());
     }
