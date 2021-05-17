@@ -181,22 +181,28 @@ public class Parser {
 
     private Expresion parseExpresion(ArrayList<Token> tokens) {
         MulExpresion left = parseMulExpresion(tokens);
-        Expresion exp = new Expresion(left);
+        Expresion exp;
         if (tokens.get(currentToken).getType() == TokenType.PLUS || tokens.get(currentToken).getType() == TokenType.MINUS){
-            exp.setOperand(tokens.get(currentToken).getType());
+            TokenType operand = tokens.get(currentToken).getType();
             currentToken++;
-            exp.setRight(parseExpresion(tokens));
+            Expresion right = parseExpresion(tokens);
+            exp = new Expresion(left,operand,right);
+        } else {
+            exp = new Expresion(left);
         }
         return exp;
     }
 
     private MulExpresion parseMulExpresion(ArrayList<Token> tokens) {
         PrimaryExpresion left = parsePrimaryExpresion(tokens);
-        MulExpresion exp = new MulExpresion(left);
+        MulExpresion exp;
         if (tokens.get(currentToken).getType() == TokenType.MULTIPLY || tokens.get(currentToken).getType() == TokenType.DIVIDE){
-            exp.setOperand(tokens.get(currentToken).getType());
+            TokenType operand = tokens.get(currentToken).getType();
             currentToken++;
-            exp.setRight(parseMulExpresion(tokens));
+            MulExpresion right = parseMulExpresion(tokens);
+            exp = new MulExpresion(left, operand, right);
+        } else {
+            exp = new MulExpresion(left);
         }
         return exp;
     }
