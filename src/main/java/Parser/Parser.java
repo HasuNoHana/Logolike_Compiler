@@ -24,7 +24,10 @@ public class Parser {
 
     public ArrayList<Function> parse(ArrayList<Token> tokens) {
         functions.clear();
+//        while(parseFunction())
+        //TODO
         functions.add(getFunction(tokens));
+        //czy jest eof
         return functions;
     }
 
@@ -61,6 +64,15 @@ public class Parser {
         ArrayList<Argument> arguments = new ArrayList<Argument>();
         boolean hasToBeNextArgument = false;
 
+//        if(ParseArgument()){
+//            while(parseComma()){
+//                if(!ParseArgument())
+//                    throw
+//            }
+//        }
+
+        //TODO zmień petle
+        //wywalić stack
         while (tokens.get(currentToken).getType() != TokenType.EOF) {
             if (tokens.get(currentToken).getType() == TokenType.ROUND_CLOSED_BRACKET) {
                 bracketsStack.pop();
@@ -80,6 +92,7 @@ public class Parser {
     }
 
     private Argument readArgument(ArrayList<Token> tokens) {
+        //return null
         if (tokens.get(currentToken).getType() != TokenType.ID)
             throw new functionDefinedUncorrectly("wrong function argument");
         String type = tokens.get(currentToken).getContent();

@@ -2,7 +2,7 @@ package Parser.Expresion;
 
 import LexicalAnalyzer.TokenType;
 
-public class MulExpresion {
+public class MulExpresion{
     private TokenType mulOperand;
     private PrimaryExpresion left;
     private MulExpresion right;
