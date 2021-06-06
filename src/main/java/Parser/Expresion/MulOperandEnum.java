@@ -1,5 +1,5 @@
 package Parser.Expresion;
 
-public enum MulOperand {
+public enum MulOperandEnum {
     MULTIPLY, DIVIDE;
 }

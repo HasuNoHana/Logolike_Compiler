@@ -1,7 +1,7 @@
 package Parser;
 
 import Parser.Expresion.PrimaryExpresion;
-import Parser.Expresion.PrimaryExpresionType;
+import Parser.Expresion.PrimaryExpresionEnum;
 
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ public class MemberAcess extends PrimaryExpresion {
     }
 
     @Override
-    public PrimaryExpresionType getPrimaryExpresionType() {
-        return PrimaryExpresionType.MEMBERACESS;
+    public PrimaryExpresionEnum getPrimaryExpresionEnum() {
+        return PrimaryExpresionEnum.MEMBERACESS;
     }
 
     public ArrayList<Member> getMembers() {

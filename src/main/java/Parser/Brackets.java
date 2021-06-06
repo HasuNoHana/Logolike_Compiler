@@ -2,7 +2,7 @@ package Parser;
 
 import Parser.Expresion.Expresion;
 import Parser.Expresion.PrimaryExpresion;
-import Parser.Expresion.PrimaryExpresionType;
+import Parser.Expresion.PrimaryExpresionEnum;
 
 public class Brackets extends PrimaryExpresion {
     Expresion expresion;
@@ -16,7 +16,7 @@ public class Brackets extends PrimaryExpresion {
     }
 
     @Override
-    public PrimaryExpresionType getPrimaryExpresionType() {
-        return PrimaryExpresionType.BRACKETS;
+    public PrimaryExpresionEnum getPrimaryExpresionEnum() {
+        return PrimaryExpresionEnum.BRACKETS;
     }
 }

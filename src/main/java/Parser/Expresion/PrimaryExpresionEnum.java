@@ -1,5 +1,5 @@
 package Parser.Expresion;
 
-public enum PrimaryExpresionType {
+public enum PrimaryExpresionEnum {
     NUMBER, POINT, BRACKETS, MEMBERACESS;
 }

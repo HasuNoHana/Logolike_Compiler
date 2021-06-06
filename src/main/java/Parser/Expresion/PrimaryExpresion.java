@@ -1,7 +1,7 @@
 package Parser.Expresion;
 
 public abstract class PrimaryExpresion {
-    protected PrimaryExpresionType primaryExpresionType;
+    protected PrimaryExpresionEnum primaryExpresionEnum;
 
-    public abstract PrimaryExpresionType getPrimaryExpresionType() ;
+    public abstract PrimaryExpresionEnum getPrimaryExpresionEnum() ;
 }

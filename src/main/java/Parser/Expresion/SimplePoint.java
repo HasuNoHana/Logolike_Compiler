@@ -1,9 +1,5 @@
 package Parser.Expresion;
 
-import Parser.Expresion.Expresion;
-import Parser.Expresion.PrimaryExpresion;
-import Parser.Expresion.PrimaryExpresionType;
-
 public class SimplePoint extends PrimaryExpresion {
     private Expresion x;
     private Expresion y;
@@ -14,8 +10,8 @@ public class SimplePoint extends PrimaryExpresion {
     }
 
     @Override
-    public PrimaryExpresionType getPrimaryExpresionType() {
-        return PrimaryExpresionType.POINT;
+    public PrimaryExpresionEnum getPrimaryExpresionEnum() {
+        return PrimaryExpresionEnum.POINT;
     }
 
     public Expresion getX() {

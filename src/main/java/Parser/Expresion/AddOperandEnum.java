@@ -1,5 +1,5 @@
 package Parser.Expresion;
 
-public enum AddOperand {
+public enum AddOperandEnum {
     ADD, SUBSTRACT;
 }

@@ -12,7 +12,7 @@ public class Number extends PrimaryExpresion {
     }
 
     @Override
-    public PrimaryExpresionType getPrimaryExpresionType() {
-        return PrimaryExpresionType.NUMBER;
+    public PrimaryExpresionEnum getPrimaryExpresionEnum() {
+        return PrimaryExpresionEnum.NUMBER;
     }
 }

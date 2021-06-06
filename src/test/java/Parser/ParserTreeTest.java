@@ -5,7 +5,7 @@ import LexicalAnalyzer.Token;
 import LexicalAnalyzer.TokenType;
 import Parser.Expresion.Expresion;
 import Parser.Expresion.Number;
-import Parser.Expresion.PrimaryExpresionType;
+import Parser.Expresion.PrimaryExpresionEnum;
 import Parser.Expresion.SimplePoint;
 import exceptions.WrongTokenExeption;
 import org.junit.Assert;
@@ -156,7 +156,7 @@ public class ParserTreeTest {
         Expresion e = i.getMemberAcess().getMembers().get(1).getExpresions().get(0);
 
         Brackets p1 = (Brackets) e.getLeft().getLeft();
-        Assert.assertEquals(PrimaryExpresionType.BRACKETS, p1.getPrimaryExpresionType());
+        Assert.assertEquals(PrimaryExpresionEnum.BRACKETS, p1.getPrimaryExpresionEnum());
         Number n = (Number) p1.getExpresion().getLeft().getLeft();
         Assert.assertEquals(1, n.getNumber());
     }
@@ -182,7 +182,7 @@ public class ParserTreeTest {
         Expresion e = members.get(0).getExpresions().get(0);
         SimplePoint p = (SimplePoint) e.getLeft().getLeft();
 
-        Assert.assertEquals(PrimaryExpresionType.POINT, p.getPrimaryExpresionType());
+        Assert.assertEquals(PrimaryExpresionEnum.POINT, p.getPrimaryExpresionEnum());
         Number n = (Number)p.getX().getLeft().getLeft();
         Number n2 = (Number)p.getY().getLeft().getLeft();
         Assert.assertEquals(1, n.getNumber());
